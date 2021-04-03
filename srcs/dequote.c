@@ -3,41 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   dequote.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmass <rmass@student.42.fr>                +#+  +:+       +#+        */
+/*   By: rnancee <rnancee@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/20 14:36:05 by rmass             #+#    #+#             */
-/*   Updated: 2021/02/21 18:44:07 by rmass            ###   ########.fr       */
+/*   Updated: 2021/04/01 18:38:21 by rnancee          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	add_one(char **str, char c)
+static void	change_list_data(char *result, char **data)
 {
-	int		i;
-	int		len;
-	char	*result;
+	char	*temp;
 
-	len = ft_strlen(*str);
-	result = malloc(len + 2);
-	i = 0;
-	while ((*str) && (*str)[i])
-	{
-		result[i] = (*str)[i];
-		i++;
-	}
-	result[i] = c;
-	result[i + 1] = 0;
-	free_if_exist(*str);
-	*str = result;
+	temp = ft_strdup(result);
+	free_if_exist(result);
+	free_if_exist(*data);
+	*data = temp;
 }
 
-static void	check_quote(char **result, char temp, char *in_quote, char *type)
+static int	check_quote(char temp, char *in_quote, char *type)
 {
 	if (*in_quote)
 	{
 		if (temp != *type)
-			add_one(result, temp);
+			return (1);
 		else
 			*in_quote = 0;
 	}
@@ -46,6 +36,15 @@ static void	check_quote(char **result, char temp, char *in_quote, char *type)
 		*in_quote = 1;
 		*type = temp;
 	}
+	return (0);
+}
+
+int			set_vars(int *i, int *j, char **result, t_list *list)
+{
+	*result = malloc(ft_strlen(list->data) + 1);
+	*i = -1;
+	*j = -1;
+	return (0);
 }
 
 void		dequote(t_list *list)
@@ -54,24 +53,25 @@ void		dequote(t_list *list)
 	char	in_quote;
 	char	type;
 	int		i;
+	int		j;
 
-	while (list)
+	while (list && !ft_strcmp(list->data, ";"))
 	{
-		in_quote = 0;
-		result = 0;
-		i = -1;
+		in_quote = set_vars(&i, &j, &result, list);
 		while (list->data && (list->data)[++i])
 		{
-			if ((list->data)[i] != '\'' && (list->data)[i] != '\"')
-				add_one(&result, (list->data)[i]);
-			else
-				check_quote(&result, (list->data)[i], &in_quote, &type);
+			if ((list->data)[i] == '\\' && (list->data)[i + 1] != '\'')
+			{
+				result[++j] = (list->data)[i++];
+				result[++j] = (list->data)[i];
+			}
+			else if ((list->data)[i] != '\'' && (list->data)[i] != '\"')
+				result[++j] = (list->data)[i];
+			else if (check_quote((list->data)[i], &in_quote, &type))
+				result[++j] = (list->data)[i];
 		}
-		if ((list->data)[0] != 0)
-		{
-			free_if_exist(list->data);
-			list->data = result;
-		}
+		result[++j] = 0;
+		change_list_data(result, &(list->data));
 		list = list->next;
 	}
 }

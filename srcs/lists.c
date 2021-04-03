@@ -6,7 +6,7 @@
 /*   By: rnancee <rnancee@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/14 18:25:57 by rnancee           #+#    #+#             */
-/*   Updated: 2021/02/17 13:41:48 by rnancee          ###   ########.fr       */
+/*   Updated: 2021/03/31 20:23:54 by rnancee          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ void	ft_lstadd_back(t_list **lst, t_list *lst_new)
 	{
 		a = ft_lstlast(*lst);
 		(a)->next = lst_new;
-		a->next->next = 0;
 	}
 }
 

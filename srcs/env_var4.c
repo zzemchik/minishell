@@ -1,36 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   command_equally.c                                  :+:      :+:    :+:   */
+/*   env_var4.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmass <rmass@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/02/20 00:00:01 by rmass             #+#    #+#             */
-/*   Updated: 2021/04/03 22:37:15 by rmass            ###   ########.fr       */
+/*   Created: 2021/04/03 21:55:11 by rmass             #+#    #+#             */
+/*   Updated: 2021/04/03 21:56:27 by rmass            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	apply_equally(t_list **list)
+int			key_exist(char *key)
 {
-	t_list	*temp;
-	char	*key;
-	char	*value;
-	int		i;
+	t_env_var	*temp;
 
-	temp = *list;
-	while (temp && !ft_strcmp(temp->data, "|") && !ft_strcmp(temp->data, ";"))
+	temp = g_vars_list;
+	while (temp)
 	{
-		i = 0;
-		while ((temp->data)[i] != '=')
-			i++;
-		key = ft_strndup((*list)->data, i);
-		value = ft_strdup((*list)->data + i + 1);
-		add_var(key, value, &g_temp_vars_list, 1);
+		if (ft_strcmp(temp->key, key))
+			return (1);
 		temp = temp->next;
-		if ((*list)->next && !ft_strcmp((*list)->next->data, ";"))
-			free_one_list(list);
 	}
-	return (1);
+	temp = g_temp_vars_list;
+	while (temp)
+	{
+		if (ft_strcmp(temp->key, key))
+			return (2);
+		temp = temp->next;
+	}
+	return (0);
 }

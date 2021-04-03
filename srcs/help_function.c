@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   help_function.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rmass <rmass@student.42.fr>                    +#+  +:+       +#+        */
+/*   By: rnancee <rnancee@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/02/15 13:57:08 by rnancee           #+#    #+#             */
-/*   Updated: 2021/02/23 20:35:59 by rmass            ###   ########.fr       */
+/*   Created: 2021/03/14 16:58:20 by rmass             #+#    #+#             */
+/*   Updated: 2021/03/19 18:17:51 by rnancee          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,8 @@ char	*ft_strjoin(const char *str1, const char *str2)
 
 void	ft_putstr(const char *str)
 {
-	if (g_flag_write)
-		if (str)
-			write(1, str, ft_strlen(str));
+	if (str)
+		write(1, str, ft_strlen(str));
 }
 
 int		ft_strcmp(const char *str_f, const char *str_s)

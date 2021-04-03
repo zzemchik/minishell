@@ -3,80 +3,112 @@
 /*                                                        :::      ::::::::   */
 /*   env_var3.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rnancee <rnancee@student.42.fr>            +#+  +:+       +#+        */
+/*   By: rmass <rmass@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/21 22:25:00 by rmass             #+#    #+#             */
-/*   Updated: 2021/02/23 20:34:17 by rnancee          ###   ########.fr       */
+/*   Updated: 2021/04/03 22:37:26 by rmass            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	remove_value(t_env_var **list, char *key)
+void	parse_env_vars(char **envp)
 {
-	t_env_var	*temp;
-	t_env_var	*t;
-
-	if (!(*list))
-		return ;
-	if (ft_strcmp((*list)->key, key))
-	{
-		*list = (*list)->next;
-		return ;
-	}
-	temp = *list;
-	while (temp->next)
-	{
-		if (ft_strcmp(temp->next->key, key))
-		{
-			t = temp->next;
-			free_if_exist(temp->next->key);
-			free_if_exist(temp->next->value);
-			temp->next = temp->next->next;
-			free(t);
-			return ;
-		}
-		temp = temp->next;
-	}
-}
-
-void	parse_env_vars(int i)
-{
-	int		fd;
-	char	*buf;
-	char	*line;
 	char	*key;
 	char	*value;
+	int		i;
+	int		j;
 
-	buf = malloc(101);
-	line = 0;
-	fd = open("env_var", O_RDONLY);
-	
-	while (get_next_line(fd, buf, &line))
+	i = -1;
+	while (envp[++i])
 	{
-		i = 0;
-		while (line[i] != '=')
-			i++;
-		key = ft_strndup(line, i);
-		value = ft_strdup(line + i + 1);
-		add_var(key, value, &g_vars_list);
+		j = 0;
+		while (envp[i][j] != '=')
+			j++;
+		key = ft_strndup(envp[i], j);
+		value = ft_strdup(envp[i] + j + 1);
+		add_var(key, value, &g_vars_list, 1);
+	}
+	value = get_value("SHLVL", g_vars_list);
+	if (value)
+	{
+		i = ft_atoi(value);
+		add_var(ft_strdup("SHLVL"), ft_itoa(i + 1), &g_vars_list, 1);
 	}
 }
 
-void	save_env_vars(void)
+char	*key_value_to_char(char *key, char *value)
 {
-	int			fd;
-	t_env_var	*temp;
+	char	*temp;
+	char	*result;
 
-	fd = open("env_var", O_RDWR);
+	temp = ft_strjoin(key, "=");
+	result = ft_strjoin(temp, value);
+	free_if_exist(temp);
+	return (result);
+}
+
+void	vars_to_array_norm(t_env_var *temp, char **result, int *i, char *name)
+{
+	if (temp->value)
+	{
+		if (!ft_strcmp(temp->key, "_"))
+			result[*i] = key_value_to_char(temp->key, temp->value);
+		else
+			result[*i] = key_value_to_char(temp->key, name);
+	}
+	else
+		(*i)--;
+}
+
+char	**vars_to_array(char *name)
+{
+	t_env_var	*temp;
+	int			size;
+	char		**result;
+	int			i;
+
 	temp = g_vars_list;
+	size = 0;
 	while (temp)
 	{
-		write(fd, temp->key, ft_strlen(temp->key));
-		write(fd, "=", 1);
-		write(fd, temp->value, ft_strlen(temp->value));
-		write(fd, "\n", 1);
+		if (temp->value)
+			size++;
 		temp = temp->next;
 	}
-	close(fd);
+	if (!(result = malloc(sizeof(char*) * (size + 1))))
+		exita(0);
+	result[size] = 0;
+	i = -1;
+	temp = g_vars_list;
+	while (++i < size)
+	{
+		vars_to_array_norm(temp, result, &i, name);
+		temp = temp->next;
+	}
+	return (result);
+}
+
+void	add_reminder(char *temp, int i, char **result)
+{
+	int		j;
+	char	*t;
+	char	*tmp;
+
+	if (temp[i] != 0)
+	{
+		t = *result;
+		if (!ft_strchr(temp, '$'))
+			*result = ft_strjoin(*result, temp + i);
+		else
+		{
+			j = i;
+			while (temp[j] != '$')
+				j++;
+			tmp = ft_strndup(temp + i, j - i);
+			*result = ft_strjoin(*result, tmp);
+			free_if_exist(tmp);
+		}
+		free_if_exist(t);
+	}
 }

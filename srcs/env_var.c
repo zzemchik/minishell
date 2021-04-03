@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_var.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rnancee <rnancee@student.42.fr>            +#+  +:+       +#+        */
+/*   By: rmass <rmass@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 18:47:02 by rmass             #+#    #+#             */
-/*   Updated: 2021/02/23 20:48:42 by rnancee          ###   ########.fr       */
+/*   Updated: 2021/04/03 22:36:40 by rmass            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static void	push_front(char *key, char *value, t_env_var **list)
 	t_env_var	*new;
 
 	if (!(new = malloc(sizeof(t_env_var))))
-		exita();
+		exita(0);
 	new->key = key;
 	new->value = value;
 	new->next = 0;
@@ -46,13 +46,12 @@ static void	push_front(char *key, char *value, t_env_var **list)
 	}
 }
 
-void		add_var(char *key, char *value, t_env_var **list)
+void		add_var(char *key, char *value, t_env_var **list, int flag)
 {
 	t_env_var	*temp;
-	int			flag;
 
-	flag = 1;
-	if (!get_value(key, g_temp_vars_list) && !get_value(key, g_vars_list))
+	if (!get_value(key, g_temp_vars_list) && \
+	!get_value(key, g_vars_list) && !key_exist(key))
 		push_front(key, value, list);
 	else
 	{
@@ -66,10 +65,12 @@ void		add_var(char *key, char *value, t_env_var **list)
 				free_if_exist(temp->value);
 				temp->value = 0;
 				temp->value = value;
+				free_if_exist(key);
 				return ;
 			}
 			temp = temp->next;
 		}
+		free_if_exist(key);
 	}
 }
 
@@ -80,10 +81,13 @@ void		display_all_vars(void)
 	temp = g_vars_list;
 	while (temp)
 	{
-		ft_putstr(temp->key);
-		ft_putstr("=");
-		ft_putstr(temp->value);
-		ft_putstr("\n");
+		if (temp->value)
+		{
+			ft_putstr(temp->key);
+			ft_putstr("=");
+			ft_putstr(temp->value);
+			ft_putstr("\n");
+		}
 		temp = temp->next;
 	}
 }

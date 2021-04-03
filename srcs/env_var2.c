@@ -6,7 +6,7 @@
 /*   By: rmass <rmass@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/20 16:49:53 by rmass             #+#    #+#             */
-/*   Updated: 2021/02/21 22:24:09 by rmass            ###   ########.fr       */
+/*   Updated: 2021/03/26 23:16:47 by rmass            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,9 @@ static int	is_in_single_quotes(char *temp)
 
 static void	rep_vars_norm(char **result, char *key, int flag, char *t)
 {
+	char	*value;
+
+	value = get_value(key, g_vars_list);
 	if (flag)
 	{
 		*result = ft_strjoin(*result, "$");
@@ -50,10 +53,12 @@ static void	rep_vars_norm(char **result, char *key, int flag, char *t)
 		t = *result;
 		*result = ft_strjoin(*result, key);
 	}
-	else if (get_value(key, g_vars_list))
-		*result = ft_strjoin(*result, get_value(key, g_vars_list));
+	else if (value)
+		*result = ft_strjoin(*result, value);
 	else
 		*result = ft_strjoin(*result, get_value(key, g_temp_vars_list));
+	if (ft_strcmp(key, "?"))
+		free_if_exist(value);
 	free_if_exist(t);
 	free_if_exist(key);
 }
@@ -72,18 +77,13 @@ static void	rep_vars(char *temp, char **result)
 			return ;
 		temp++;
 		i = 0;
-		while (is_alpha(temp[i]) || (i > 0 && is_num(temp[i])))
+		while (temp[i] && temp[i] != ' ' && temp[i] != '\"' \
+		&& temp[i] != '\'' && temp[i] != '$')
 			i++;
 		key = ft_strndup(temp, i);
 		t = *result;
 		rep_vars_norm(result, key, flag, t);
-		flag = is_in_single_quotes(temp);
-		if (!ft_strchr(temp, '$') && temp[i] != 0)
-		{
-			t = *result;
-			*result = ft_strjoin(*result, ft_strdup(temp + i));
-			free_if_exist(t);
-		}
+		add_reminder(temp, i, result);
 	}
 }
 
@@ -99,7 +99,7 @@ static void	replace(t_list *list, char **result)
 		*result = ft_strndup(list->data, i);
 	}
 	else
-		*result = ft_strdup(list->data);
+		return ;
 	rep_vars(list->data, result);
 }
 
@@ -108,13 +108,16 @@ void		replace_vars(t_list *list)
 	char	*temp;
 	char	*result;
 
-	while (list)
+	while (list && !ft_strcmp(list->data, ";"))
 	{
 		result = 0;
 		temp = list->data;
 		replace(list, &result);
-		list->data = result;
-		free_if_exist(temp);
+		if (result)
+		{
+			list->data = result;
+			free_if_exist(temp);
+		}
 		list = list->next;
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: rmass <rmass@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/16 19:41:42 by rnancee           #+#    #+#             */
-/*   Updated: 2021/02/20 16:43:36 by rmass            ###   ########.fr       */
+/*   Updated: 2021/03/26 23:12:43 by rmass            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 char	*ft_strchr(const char *s, int c)
 {
-	int		i;
 	char	*temp;
 
-	i = -1;
+	if (!s)
+		return (0);
 	temp = (char *)s;
 	while (temp[0] != 0 || c == 0)
 	{
@@ -31,7 +31,7 @@ char	*ft_strchr(const char *s, int c)
 char	*ft_strndup(const char *str, int kk)
 {
 	char	*str_cpy;
-	size_t	i;
+	int		i;
 
 	if (str == 0)
 		return (0);
@@ -39,7 +39,7 @@ char	*ft_strndup(const char *str, int kk)
 	if (kk < i)
 		i = kk;
 	if (!(str_cpy = (char *)malloc(i + 1)))
-		exita();
+		exita(0);
 	str_cpy[i] = 0;
 	i = -1;
 	while (str[++i] != 0 && kk != 0)

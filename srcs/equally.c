@@ -5,66 +5,117 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rmass <rmass@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/02/19 22:29:59 by rmass             #+#    #+#             */
-/*   Updated: 2021/02/21 18:40:14 by rmass            ###   ########.fr       */
+/*   Created: 2021/03/04 17:24:56 by rmass             #+#    #+#             */
+/*   Updated: 2021/03/20 20:23:01 by rmass            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	add_space(t_list *list)
+static void	del_if_eq(t_list **list, t_list *el)
 {
 	t_list	*temp;
 
-	if (!(temp = malloc(sizeof(t_list))))
-		exita();
-	temp->data = ft_strdup("");
-	temp->next = list->next;
-	list->next = temp;
-}
-
-static void	find_equally_norm(int eq_start, int qu_start, t_list *list)
-{
-	int	i;
-
-	if (qu_start < eq_start)
-		add_space(list);
+	if (*list == el)
+		*list = (*list)->next;
 	else
 	{
-		i = -1;
-		while (++i < eq_start)
+		temp = *list;
+		while (temp->next)
 		{
-			if (!is_alpha(list->data[i]) && !(i > 0 && is_num(list->data[i])))
+			if (temp->next == el)
 			{
-				add_space(list);
+				temp->next = temp->next->next;
 				break ;
 			}
+			temp = temp->next;
+		}
+	}
+	free_if_exist(el->data);
+	free(el);
+}
+
+int			correct_equal(char *str)
+{
+	int		eq_start;
+	int		i;
+
+	eq_start = 0;
+	i = -1;
+	if (!ft_strchr(str, '='))
+		return (0);
+	while (str[eq_start] != '=')
+		eq_start++;
+	if (!is_alpha(str[0]) && str[0] != '_' && str[0] != '?')
+		return (0);
+	while (++i < eq_start)
+		if (!is_alpha(str[i]) && str[i] != '_' && !is_num(str[i]))
+			return (0);
+	return (1);
+}
+
+void		add_el(t_list_list **list, t_list *el)
+{
+	t_list_list	*temp;
+
+	temp = malloc(sizeof(t_list_list));
+	temp->data = el;
+	temp->next = 0;
+	if (*list)
+		temp->next = *list;
+	*list = temp;
+}
+
+void		find_equally_norm(t_list *start, int flag, t_list_list **del_list)
+{
+	t_list	*temp;
+
+	temp = start;
+	while (temp && !ft_strcmp(temp->data, ";") && !flag)
+	{
+		if (ft_strcmp(temp->data, "|") || !correct_equal(temp->data))
+			flag = 1;
+		temp = temp->next;
+	}
+	if (flag)
+	{
+		temp = start;
+		while (temp && !ft_strcmp(temp->data, ";"))
+		{
+			if (correct_equal(temp->data))
+				add_el(del_list, temp);
+			else
+			{
+				while (temp->next && !ft_strcmp(temp->next->data, "|") \
+				&& !ft_strcmp(temp->next->data, ";"))
+					temp = temp->next;
+			}
+			temp = temp->next;
 		}
 	}
 }
 
-void		find_equally(t_list *list)
+void		find_equally(t_list **list)
 {
-	int		eq_start;
-	int		qu_start;
+	t_list_list	*del_list_temp;
+	t_list_list	*del_list;
+	t_list		*start;
 
-	while (list)
+	del_list = 0;
+	start = *list;
+	while (start)
 	{
-		if (ft_strchr(list->data, '='))
-		{
-			eq_start = 0;
-			while (list->data[eq_start] != '=')
-				eq_start++;
-			qu_start = 0;
-			while (list->data[qu_start] != '\'' && \
-			list->data[qu_start] != '\"' && list->data[qu_start] != 0)
-				qu_start++;
-			find_equally_norm(eq_start, qu_start, list);
-		}
-		while (list && list->next && !ft_strcmp(list->next->data, "|") \
-		&& !ft_strcmp(list->next->data, ";"))
-			list = list->next;
-		if (list)
-			list = list->next;
+		find_equally_norm(start, 0, &del_list);
+		while (start && !ft_strcmp(start->data, ";"))
+			start = start->next;
+		if (start && ft_strcmp(start->data, ";"))
+			start = start->next;
+	}
+	while (del_list)
+	{
+		del_list_temp = del_list;
+		del_if_eq(list, del_list->data);
+		del_list = del_list->next;
+		free(del_list_temp);
 	}
 }

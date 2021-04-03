@@ -1,8 +1,0 @@
-./a.out > file1
-|		: stdout right
-| >		: dont complite last, but if all it 1 time complite all
-; >		: complite all
-| ;		: complite 1st part of (|), then 2nd, then 3rd ...
-$		: work twice
-our cd	: dont work with abs path
->		: wait some text

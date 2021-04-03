@@ -6,7 +6,7 @@
 /*   By: rnancee <rnancee@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/20 16:43:02 by rmass             #+#    #+#             */
-/*   Updated: 2021/02/23 18:27:40 by rnancee          ###   ########.fr       */
+/*   Updated: 2021/03/23 14:19:27 by rnancee          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ char	*ft_strdup(const char *str)
 		return (0);
 	i = ft_strlen(str);
 	if (!(str_cpy = (char *)malloc(i + 1)))
-		exita();
+		exita(0);
 	str_cpy[i] = 0;
 	i = 0;
 	while (*str != 0)
@@ -52,8 +52,6 @@ void	print_list(t_list *list)
 	while (list)
 	{
 		ft_putstr("\"");
-		if (list->data == 0)
-			printf("qwihgaiuwfalwufaliuwgh\n");
 		ft_putstr(list->data);
 		ft_putstr("\"");
 		list = list->next;
@@ -70,4 +68,13 @@ void	skip(t_list **list)
 	while ((*list)->next && !ft_strcmp((*list)->next->data, "|") && \
 	!ft_strcmp((*list)->next->data, ";"))
 		free_one_list(list);
+}
+
+void	print_error(char *argv)
+{
+	ft_putstr("minishell: ");
+	ft_putstr(argv);
+	ft_putstr("\n");
+	ft_putstr(strerror(errno));
+	ft_putstr("\n");
 }

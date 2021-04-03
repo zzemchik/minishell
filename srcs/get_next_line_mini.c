@@ -1,21 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_mini.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rnancee <rnancee@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/14 17:53:36 by rnancee           #+#    #+#             */
-/*   Updated: 2021/03/18 20:23:02 by rnancee          ###   ########.fr       */
+/*   Updated: 2021/03/18 20:24:48 by rnancee          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+static char	*find_new_line_mini(char *buff)
+{
+	int i;
+
+	i = -1;
+	while (buff[++i] != 0)
+		if (buff[i] == '\n')
+			return (ft_strdup(&buff[i + 1]));
+	return (0);
+}
+
 static void	is_str(char **temp, char **after_n, char **line, char **str)
 {
 	*temp = *after_n;
-	*after_n = find_new_line(*str);
+	*after_n = find_new_line_mini(*str);
 	if (*temp)
 		free(*temp);
 	*temp = *line;
@@ -37,7 +48,7 @@ static int	some_read(char **buff, char **line, char **after_n, int fd)
 		count = read(fd, *buff, 100);
 		(*buff)[count] = 0;
 		temp = *after_n;
-		*after_n = find_new_line(*buff);
+		*after_n = find_new_line_mini(*buff);
 		if (temp)
 			free(temp);
 		temp = *line;
@@ -64,7 +75,7 @@ static int	some_func(char **str, char **after_n, char **buff, int count)
 	return (1);
 }
 
-int			get_next_line(int fd, char **line)
+int			get_next_line_mini(int fd, char **line)
 {
 	static char	*str[1024];
 	int			c;
