@@ -6,7 +6,7 @@
 /*   By: rnancee <rnancee@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/20 18:42:14 by rmass             #+#    #+#             */
-/*   Updated: 2021/04/04 00:04:50 by rnancee          ###   ########.fr       */
+/*   Updated: 2021/04/04 01:18:08 by rnancee          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,6 @@ void		parser(char *buf)
 	t_stack		*stack;
 
 	list = ft_split(buf, 0);
-	print_list(list);
 	if (list && to_many_operator(ft_lstlast(list)->data) == -1)
 	{
 		free_full_list(&list);

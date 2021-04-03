@@ -6,7 +6,7 @@
 /*   By: rnancee <rnancee@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/10 18:35:25 by rnancee           #+#    #+#             */
-/*   Updated: 2021/04/01 20:47:29 by rnancee          ###   ########.fr       */
+/*   Updated: 2021/04/04 01:17:22 by rnancee          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,11 @@ static t_pair	find_arrow_help(t_list *list)
 	if (ft_strcmp(list->data, ">") == 1 || ft_strcmp(list->data, ">>") == 1 \
 	|| ft_strcmp(list->data, "<") == 1)
 	{
+		if (list->next && list->next->data && list->next->data[0] == 0)
+		{
+			pair.first = -2;
+			return(pair);
+		}
 		if (find_arrow_ret(list, &pair))
 			return (pair);
 		if (ft_strcmp(list->data, "<") == 1)
