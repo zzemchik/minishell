@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rmass <rmass@student.42.fr>                +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/02/12 18:58:35 by rnancee           #+#    #+#             */
-/*   Updated: 2021/04/03 22:36:11 by rmass            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -144,6 +132,7 @@ void					give_pipe(t_list *list, int ***pipefd);
 int						get_next_line_mini(int fd, char **line);
 char					**standart_split(char const *s, char c);
 char					**standart_split(char const *s, char c);
+void					find_and_remove(char *key, char **value);
 void					remove_value(t_env_var **list, char *key);
 void					do_it_pwd(t_list **list, t_stack **stack);
 void					parser_env(t_list **list, t_stack **stack);

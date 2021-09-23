@@ -1,18 +1,6 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   command_export.c                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: rnancee <rnancee@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/02/21 20:22:11 by rmass             #+#    #+#             */
-/*   Updated: 2021/04/04 00:15:47 by rnancee          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "minishell.h"
 
-static void	find_and_remove(char *key, char **value)
+void	find_and_remove(char *key, char **value)
 {
 	if (*value)
 		return ;
