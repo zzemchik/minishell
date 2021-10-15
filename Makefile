@@ -1,5 +1,4 @@
 NAME= minishell
-
 SOURCE=	srcs/split_m.c \
 		srcs/split_m1.c \
 		srcs/lists.c \
