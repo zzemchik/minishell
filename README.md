@@ -1,4 +1,4 @@
-minishell is a light reproduction of Bourne Shell (bash).
+**minishell** is a light reproduction of Bourne Shell (bash).
 
 - Builtins functions:
 	- `cd` with only a relative or absolute path.
